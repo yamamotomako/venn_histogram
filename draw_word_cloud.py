@@ -63,6 +63,8 @@ with open("./venn_result/gene_summary.tsv", "r") as f:
         m_count = int(data[2])
         w_count = int(data[3])
 
+        print y_count, m_count, w_count
+
         if y_count != 0:
             y_dict[gene] = y_count - m_count
         if m_count != 0:
@@ -85,7 +87,6 @@ fpath = "/Library/Fonts/Arial.ttf"
 #    width=800,height=600).generate(y_text)
 
 all_count = y_all + m_all + w_all
-
 
 magni_y = round(float(y_all)/all_count,2)
 magni_m = round(float(m_all)/all_count,2)
@@ -123,8 +124,6 @@ max_w = 5
 minfontsize = 10
 margin_size = 8
 
-print magni_y, magni_m, magni_w
-
 #y_dict["FLT3"] = 5
 
 
@@ -141,6 +140,9 @@ wordcloud_y = WordCloud(background_color=None,
     #max_font_size=round(300*magni_y,0),
     color_func=grey_color_func).generate_from_frequencies(y_dict, font_y)
 
+wordcloud_y.to_file("./yokomon.png")
+
+
 wordcloud_m = WordCloud(background_color=None,
     mode="RGBA",
     font_path=fpath,
@@ -154,23 +156,30 @@ wordcloud_m = WordCloud(background_color=None,
     #max_font_size=round(300*magni_m,0),
     color_func=grey_color_func).generate_from_frequencies(m_dict, font_m)
 
-wordcloud_w = WordCloud(background_color=None,
-    mode="RGBA",
-    font_path=fpath,
-    margin=margin_size,
-    width=width_w,
-    height=height_w,
-    relative_scaling=scale_index,
-    prefer_horizontal=1,
-    max_words=max_w,
-    min_font_size=minfontsize,
-    #max_font_size=round(300*magni_w,0),
-    color_func=grey_color_func).generate_from_frequencies(w_dict, font_w)
-
-
-wordcloud_y.to_file("./yokomon.png")
 wordcloud_m.to_file("./match.png")
-wordcloud_w.to_file("./watson.png")
+
+
+w_ttl = 0
+for key in w_dict:
+    val = w_dict[key]
+    w_ttl += int(val)
+
+if w_ttl != 0:
+    wordcloud_w = WordCloud(background_color=None,
+        mode="RGBA",
+        font_path=fpath,
+        margin=margin_size,
+        width=width_w,
+        height=height_w,
+        relative_scaling=scale_index,
+        prefer_horizontal=1,
+        max_words=max_w,
+        min_font_size=minfontsize,
+        #max_font_size=round(300*magni_w,0),
+        color_func=grey_color_func).generate_from_frequencies(w_dict, font_w)
+
+    wordcloud_w.to_file("./watson.png")
+
 
 
 

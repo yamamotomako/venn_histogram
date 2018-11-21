@@ -22,15 +22,39 @@ y_hash = {}
 w_hash = {}
 yw_hash = {}
 
-for file in os.listdir("./final"):
+for file in os.listdir("./manual/"):
+
     print file
+    
+    #r = re.compile('F-(.+)\.genomon_mutation\.result\.filt\.all\.combined_([0-9]+)_anno\.xlsx')
+    #r = re.compile('(.+)\.genomon_mutation\.result\.filt\.all\.combined_([0-9]+)\.tsv')
+    #m = r.search(file)
+    #rimsid = m.group(1)
+    #filepath = m.group(0)
 
-    r = re.compile('F-(.+)\.genomon_mutation\.result\.filt\.all\.combined_([0-9]+)\.xlsx')
-    m = r.search(file)
-    rimsid = m.group(1)
-    filepath = m.group(0)
+    type = ""
+    buf = file
 
-    venn = draw_venn.func(rimsid, filepath)
+    if buf.find(".genomon_mutation.result.filt.all.combined_20180711_anno.xlsx") != -1:
+        buf = buf.replace(".genomon_mutation.result.filt.all.combined_20180711_anno.xlsx","")
+        type = "0711"
+    if buf.find(".genomon_mutation.result.filt.all.combined_20180720_anno.xlsx") != -1:
+        buf = buf.replace(".genomon_mutation.result.filt.all.combined_20180720_anno.xlsx","")
+        type = "0720"
+    if buf.find(".genomon_mutation.result.filt.all.combined_20181105.xlsx") != -1:
+        buf = buf.replace(".genomon_mutation.result.filt.all.combined_20181105.xlsx","")
+        type = "1105"
+    if buf.find(".genomon_mutation.result.filt.all.combined_20180711") != -1:
+        buf = buf.replace(".genomon_mutation.result.filt.all.combined_20180711.xlsx","")
+        type = "0711"
+
+    #file = file.replace("./manual/","")
+    rimsid = re.sub(r'^D-',"",buf)
+    print rimsid
+    venn = draw_venn.func(rimsid, file, type)
+
+
+    #venn = draw_venn.func(rimsid, filepath)
     y_list = venn[0]
     yw_list = venn[1]
     w_list = venn[2]
@@ -74,10 +98,19 @@ w_all = w_all - match_all
 
 
 
-v = venn2(subsets=(y_all, w_all, match_all), set_labels = ('Manual Curation', 'Watson Call'))
+v = venn2(subsets=(y_all, w_all, match_all), set_labels = ('Human Curation', 'Watson Call'))
 v.get_patch_by_id('10').set_color("#819FF7")
-v.get_patch_by_id('01').set_color("#F3F781")
+v.get_patch_by_id('01').set_color("#ffb6c1")
 v.get_patch_by_id('11').set_color("#0000FF")
+
+v.get_label_by_id('10').set_y('0.3')
+v.get_label_by_id('10').set_x('-0.45')
+v.get_label_by_id('11').set_y('0.3')
+v.get_label_by_id('11').set_x('0')
+v.get_label_by_id('01').set_y('0.3')
+v.get_label_by_id('01').set_x('0.45')
+
+
 plt.title("ALL")
 plt.savefig("./venn_result/all.png")
 plt.close()
